@@ -1,0 +1,50 @@
+import urllib3 as url
+import json
+
+
+while True:
+  print('####################################')
+  print('#                                  #')
+  print('#   La météo avec Open Weather !   #')
+  print('#                                  #')
+  print('#                                  #')
+  print('#    1 - météo                     #')
+  print('#    0 - quitter                   #')
+  print('#                                  #')
+  print('####################################')
+  
+  
+  a = input('\nChoix : ')
+  if a == '0':
+    break
+  elif a == '1':
+    print()
+    b = input('Pays : ')
+    print()
+    c = input('Ville : ')
+    d = json.loads(url.PoolManager().request('GET', ('https://api.openweathermap.org/data/2.5/weather?q=' + c + ',' + b + '&appid=7585221fbcead099c4e4c4bb6fd3b68f')).data.decode('utf-8'))
+    if d['cod'] == '404':
+      print('\nLa ville n\'a pas été trouvée.')
+      input()
+    else:
+      print('\n', d['name'], ' : ', sep='')
+      print('\nLongitude = ', d['coord']['lon'], ', latitude = ', d['coord']['lat'], '.',sep='')
+      if d['weather'][0]['main'] == 'Clouds':
+        print('\nTemps : nuageux.')
+      elif d['weather'][0]['main'] == 'Drizzle':
+        print('\nTemps : pluie fine.')
+      elif d['weather'][0]['main'] == 'Clear':
+        print('\nTemps : dégagé.')
+      elif d['weather'][0]['main'] == 'Rain':
+        print('\nTemps : pluie.')
+      print('\nTempérature : ', str(round(d['main']['temp'] - 273.15, 2)), '°C.', sep='')
+      if len(d['wind']) == 1:
+        print('Vent : 0 km/h.')
+      else:
+        print('Vent : ', d['wind']['speed'], ' km/h.', sep='')
+        print('Orientation : ', d['wind']['deg'], '°.', sep='')
+      print('Humidité : ', d['main']['humidity'], '%.', sep='')
+      print('Pression atmosphérique : ', d['main']['pressure'], ' hpa.', sep='')
+      input()
+  else:
+    print('\nChoix invalide\n')
